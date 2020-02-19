@@ -1,0 +1,39 @@
+{
+  "name": "codeoperate",
+  "version": "1.0.0",
+  "description": "A Node.js co-operative code editor",
+  "main": "index.js",
+  "scripts": {
+    "debug": "nodemon --trace-warnings --inspect=0.0.0.0:9229 ./index.js",
+    "start": "node ./index.js"
+  },
+  "homepage": "https://github.com/craigbuckler/codeoperate#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/craigbuckler/codeoperate.git"
+  },
+  "bugs": {
+    "url": "https://github.com/craigbuckler/codeoperate/issues"
+  },
+  "keywords": [
+    "Node.js",
+    "WebSockets",
+    "MongoDB",
+    "Docker",
+    "SitePoint",
+    "tutorial"
+  ],
+  "author": "Craig Buckler",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "1.7.4",
+    "ejs": "3.0.1",
+    "express": "4.17.1",
+    "mongodb": "3.5.3",
+    "serve-favicon": "2.5.0",
+    "ws": "7.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "2.0.2"
+  }
+}

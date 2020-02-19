@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CodeOperate</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- CodeMirror styles -->
+<link rel="stylesheet" href="<%- cfg.path.cmLib %>codemirror.css" />
+
+<% cfg.cmTheme.forEach(t => { %>
+  <link rel="stylesheet" href="<%- cfg.path.cmTheme %><%- t %>.css" />
+<% }) %>
+
+<!-- main styles -->
+<link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+
+<header>
+
+  <h1><a href="/">CodeOperate</a></h1>
+
+  <input type="text" id="title" name="title" value="<%= edit.title %>" title="title" required />
+
+  <select id="mode" name="mode" title="mode">
+  <% for(const m in cfg.cmMode) { %>
+    <option value="<%- cfg.cmMode[m] %>"><%- m %></option>
+  <% } %>
+  </select>
+
+  <select id="theme" name="theme" title="theme">
+  <% cfg.cmTheme.forEach(t => { %>
+    <option value="<%- t %>"><%- t %></option>
+  <% }) %>
+  </select>
+
+  <a href="/new" class="button">new</a>
+
+</header>
+
+<main id="editor"></main>
+
+<aside>
+
+  <p id="created">created: <time datetime="<%= edit.created %>"><%= edit.created %></time></p>
+
+</aside>
+
+<!-- CodeMirror scripts -->
+<script src="<%- cfg.path.cmLib %>codemirror.js" defer></script>
+
+<% for(const m in cfg.cmMode) { %>
+  <script src="<%- cfg.path.cmMode %><%- cfg.cmMode[m] %>/<%- cfg.cmMode[m] %>.js" defer></script>
+<% } %>
+
+<!-- main script -->
+<script type="module">
+window.cfg = {
+  wsURL   : 'ws://<%- cfg.hostname %>:<%- cfg.portWS %>',
+  mode    : '<%- edit.mode %>',
+  code    : `<%= edit.code %>`
+};
+</script>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
