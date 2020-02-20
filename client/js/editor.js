@@ -15,16 +15,41 @@ const
     lineNumbers: true
   });
 
+
+// encode whitespace
+function encodeSpace(str) {
+  return str.replace(/\t/g, '[\\t]').replace(/\n/g, '[\\n]');
+}
+
+
+// decode whitespace
+function decodeSpace(str) {
+  return str.replace(/\[\\t\]/g, '\t').replace(/\[\\n\]/g, '\n');
+}
+
+
+// fetch all content
+export function get() {
+  return encodeSpace(cm.getValue());
+}
+
+
+// set all content
+export function set(content) {
+  cm.setValue(decodeSpace(content));
+}
+
+
 // user edit event
 cm.on('change', (i, change) => {
 
-  if (change.origin === 'gen') return;
+  if (change.origin === 'gen' || change.origin === 'setValue') return;
 
   let text = change.text[0];
   if (change.text.length == 2 && !text && !change.text[1]) text = '\n';
 
   raiseEvent('CHANGE', {
-    text: text.replace(/\t/g,'[\\t]').replace(/\n/g,'[\\n]'),
+    text: encodeSpace(text),
     from: { line: change.from.line, ch: change.from.ch },
     to:   { line: change.to.line, ch: change.to.ch }
   });
@@ -35,7 +60,7 @@ cm.on('change', (i, change) => {
 export function edit(change) {
 
   cm.replaceRange(
-    change.text.replace(/\[\\t\]/g, '\t').replace(/\[\\n\]/g, '\n'),
+    decodeSpace(change.text),
     change.from,
     change.to,
     'gen'

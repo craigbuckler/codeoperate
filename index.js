@@ -11,6 +11,7 @@ HTTP and WebSocket servers
 // globals
 const
   cfg = global.cfg = require('./lib/config')(__dirname),
+  code = global.code = require('./lib/code'),
   express = global.express = require('express'),
   app = express();
 
@@ -61,24 +62,27 @@ server.on('connection', socket => {
 // register user
 function register(socket, msg) {
 
-  let editId = null, userId = null;
+  let reg, editId = null, userId = null;
 
   try {
-    let reg = JSON.parse(msg);
-    if (reg.type === 'REGISTER') {
-
-      editId = reg.data;
-      editor[editId] = editor[editId] || { active: 0, user: [] };
-
-      userId = editor[editId].user.length;
-      editor[editId].user.push({ userId, socket, name: 'editor' });
-      editor[editId].active++;
-
-      console.log(`register user ${userId} at ${editId} (${editor[editId].active} active)`);
-
-    }
+    reg = JSON.parse(msg);
   }
-  catch (e){}
+  catch (e) {
+    console.log(e, msg);
+  }
+
+  if (reg && reg.type === 'REGISTER') {
+
+    editId = reg.data;
+    editor[editId] = editor[editId] || { active: 0, user: [] };
+
+    userId = editor[editId].user.length;
+    editor[editId].user.push({ userId, socket, name: 'editor' });
+    editor[editId].active++;
+
+    console.log(`register user ${userId} at ${editId} (${editor[editId].active} active)`);
+
+  }
 
   return { editId, userId };
 
@@ -101,17 +105,19 @@ function broadcast(editId, userId, msg) {
 // deregister user
 function deregister(editId, userId) {
 
-  if (!editId || !editor[editId]) return;
+  if (editId && editor[editId]) {
 
-  console.log(`deregister user ${userId} at ${editId} (${editor[editId].active - 1} active)`);
+    console.log(`deregister user ${userId} at ${editId} (${editor[editId].active - 1} active)`);
 
-  editor[editId].user[userId] = null;
-  userId = null;
-  editor[editId].active--;
+    editor[editId].user[userId] = null;
+    userId = null;
+    editor[editId].active--;
 
-  if (!editor[editId].active) {
-    delete editor[editId];
-    editId = null;
+    if (!editor[editId].active) {
+      delete editor[editId];
+      editId = null;
+    }
+
   }
 
   return { editId, userId };

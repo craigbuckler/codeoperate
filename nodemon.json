@@ -4,7 +4,7 @@
   "ignore": [
     ".git/",
     "*.md",
-    "testpages/",
+    "client/",
     "node_modules/"
   ],
   "legacyWatch": true,
