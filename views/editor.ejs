@@ -8,9 +8,9 @@
 <!-- CodeMirror styles -->
 <link rel="stylesheet" href="<%- cfg.path.cmLib %>codemirror.css" />
 
-<% cfg.cmTheme.forEach(t => { %>
+<% cfg.cmTheme.forEach(t => { if (t !== 'default') { %>
   <link rel="stylesheet" href="<%- cfg.path.cmTheme %><%- t %>.css" />
-<% }) %>
+<% }}) %>
 
 <!-- main styles -->
 <link rel="stylesheet" href="/css/main.css" />
@@ -58,6 +58,7 @@
 <script type="module">
 window.cfg = {
   wsURL   : 'ws://<%- cfg.hostname %>:<%- cfg.portWS %>',
+  id      : '<%- edit._id %>',
   mode    : '<%- edit.mode %>',
   code    : `<%= edit.code %>`
 };

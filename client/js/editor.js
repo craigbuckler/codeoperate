@@ -10,6 +10,7 @@ const
   themeNode   = document.getElementById('theme'),
 
   cm = CodeMirror(editorNode, {
+    value: cfg.code,
     tabSize: 2,
     lineNumbers: true
   });
@@ -19,31 +20,33 @@ cm.on('change', (i, change) => {
 
   if (change.origin === 'gen') return;
 
+  let text = change.text[0];
+  if (change.text.length == 2 && !text && !change.text[1]) text = '\n';
+
   raiseEvent('CHANGE', {
-    text: change.text[0],
+    text: text.replace(/\t/g,'[\\t]').replace(/\n/g,'[\\n]'),
     from: { line: change.from.line, ch: change.from.ch },
     to:   { line: change.to.line, ch: change.to.ch }
   });
 
 });
 
-// other user edit event
-window.addEventListener('ws-CHANGE', e => {
-
-  let change = e.detail;
+// programmatic edit
+export function edit(change) {
 
   cm.replaceRange(
-    change.text,
+    change.text.replace(/\[\\t\]/g, '\t').replace(/\[\\n\]/g, '\n'),
     change.from,
     change.to,
     'gen'
   );
 
-});
+}
 
 // change title
 titleNode.addEventListener('change', e => {
-  raiseEvent('TITLE', e.target.value);
+  let title = e.target.value.trim();
+  if (title) raiseEvent('TITLE', title);
 });
 
 // set editor mode

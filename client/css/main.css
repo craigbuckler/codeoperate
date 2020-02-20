@@ -1,5 +1,6 @@
 /* main styles */
 :root {
+  --font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   --fore: #efefef;
   --back: #262626;
   --action: #88c;
@@ -17,7 +18,7 @@ html, body {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: var(--font);
   font-size: 100%;
   overflow: hidden;
   display: grid;
@@ -47,9 +48,10 @@ h1 {
 
 input, select, option, button, a.button {
   width: 8em;
+  font-family: inherit;
   font-size: 1em;
   padding: 0 0.4em;
-  margin: 0 1em;
+  margin: 0 0.5em;
   color: var(--fore);
   background-color: var(--back);
   border: 0 none;
@@ -78,7 +80,7 @@ a.button:hover, a.button:focus {
 }
 
 header button, header a.button {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 header a:link, header a:visited {
@@ -95,7 +97,7 @@ header a:hover, header a:focus {
 }
 
 .CodeMirror {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: var(--font);
   font-size: 1rem;
   width: 100%;
   height: 100%;
