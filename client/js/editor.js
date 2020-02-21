@@ -4,10 +4,11 @@
 'use strict';
 
 const
-  editorNode  = document.getElementById('editor'),
-  titleNode   = document.getElementById('title'),
-  modeNode    = document.getElementById('mode'),
-  themeNode   = document.getElementById('theme'),
+  editorNode    = document.getElementById('editor'),
+  titleNode     = document.getElementById('title'),
+  modeNode      = document.getElementById('mode'),
+  themeNode     = document.getElementById('theme'),
+  operatorNode  = document.getElementById('operator'),
 
   cm = CodeMirror(editorNode, {
     value: cfg.code,
@@ -30,13 +31,13 @@ function decodeSpace(str) {
 
 // fetch all content
 export function get() {
-  return encodeSpace(cm.getValue());
+  return cm.getValue();
 }
 
 
 // set all content
 export function set(content) {
-  cm.setValue(decodeSpace(content));
+  cm.setValue(content);
 }
 
 
@@ -48,7 +49,7 @@ cm.on('change', (i, change) => {
   let text = change.text[0];
   if (change.text.length == 2 && !text && !change.text[1]) text = '\n';
 
-  raiseEvent('CHANGE', {
+  raiseEvent('EDIT', {
     text: encodeSpace(text),
     from: { line: change.from.line, ch: change.from.ch },
     to:   { line: change.to.line, ch: change.to.ch }
@@ -71,14 +72,14 @@ export function edit(change) {
 // change title
 titleNode.addEventListener('change', e => {
   let title = e.target.value.trim();
-  if (title) raiseEvent('TITLE', title);
+  if (title) raiseEvent('TITL', title);
 });
 
 // set editor mode
 setMode(cfg.mode);
 modeNode.addEventListener('change', e => setMode(e.target.value));
 
-function setMode(mode) {
+export function setMode(mode) {
   if (mode === cm.getOption('mode')) return;
   modeNode.value = mode;
   cm.setOption('mode', mode);
@@ -94,11 +95,24 @@ function setTheme(theme) {
   themeNode.value = theme;
   localStorage.setItem('theme', theme);
   cm.setOption('theme', theme);
-  raiseEvent('THEME', theme);
+  raiseEvent('THME', theme);
 }
+
+// set operator name
+setOperator(localStorage.getItem('operator') || 'operator');
+operatorNode.addEventListener('change', e => setOperator(e.target.value));
+
+export function setOperator(operator) {
+  if (operator === cfg.operator) return;
+  cfg.operator = operator;
+  operatorNode.value = operator;
+  localStorage.setItem('operator', operator);
+  raiseEvent('USER', operator);
+}
+
 
 // raise new custom event
 function raiseEvent(type, detail) {
-  let event = new CustomEvent(`edit-${type}`, { detail });
+  let event = new CustomEvent(`cm${type}`, { detail });
   window.dispatchEvent(event);
 }

@@ -3,7 +3,7 @@ import * as editor from './editor.js';
 import * as ws from './wsclient.js';
 
 // delay before uploading all data
-const saveWait = 5000;
+const saveWait = cfg.saveWait;
 let save = null;
 
 
@@ -24,15 +24,15 @@ window.addEventListener('beforeunload', () => {
 
 
 // user edit - broadcast
-window.addEventListener('edit-CHANGE', e => {
-  ws.send('CHANGE', e.detail);
+window.addEventListener('cmEDIT', e => {
+  ws.send('EDIT', e.detail);
   saveAbort();
   save = setTimeout(saveAll, saveWait);
 });
 
 
 // incoming edit
-window.addEventListener('ws-CHANGE', e => {
+window.addEventListener('wsEDIT', e => {
   saveAbort();
   editor.edit(e.detail);
 });
@@ -42,12 +42,12 @@ window.addEventListener('ws-CHANGE', e => {
 function saveAll() {
   console.log('send ALL');
   saveAbort();
-  ws.send('ALL', editor.get());
+  ws.send('SAVE', editor.get());
 }
 
 
 // incoming all content
-window.addEventListener('ws-ALL', e => {
+window.addEventListener('wsSAVE', e => {
   if (save) return;
   saveAbort();
   console.log('receive ALL');

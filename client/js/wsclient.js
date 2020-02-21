@@ -24,10 +24,10 @@ function init(type, data) {
 
 
 // send WebSocket message
-export function send(type, data) {
+export function send(type = '----', data) {
 
   if (!socket) init(type, data);
-  else socket.send(`{"type":"${ type }","data":${ JSON.stringify(data) }}`);
+  else socket.send(`${ type }${ JSON.stringify(data) }`);
 
 }
 
@@ -35,19 +35,20 @@ export function send(type, data) {
 // parse incoming WebSocket message and raise custom event
 function receive(msg) {
 
-  let obj;
+  let data, type = msg.slice(0, 4);
+
   try {
-    obj = JSON.parse(msg);
+    data = JSON.parse(msg.slice(4));
   }
-  catch (e) { console.log(e); }
+  catch (e) { console.log(e, msg); }
 
-  if (!obj || !obj.type) return;
+  if (type.length !== 4 || !data) return;
 
-  // custom event
-  let event = new CustomEvent(`ws-${obj.type}`, { detail: obj.data || {} });
+  // raise custom event
+  let event = new CustomEvent(`ws${type}`, { detail: data || {} });
   window.dispatchEvent(event);
 
 }
 
 // register user
-send('REGISTER', cfg.id);
+send('CONN', { editId: cfg.editId, operator: cfg.operator });
