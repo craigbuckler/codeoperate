@@ -4,17 +4,25 @@
 'use strict';
 
 const
-  editorNode    = document.getElementById('editor'),
-  titleNode     = document.getElementById('title'),
-  modeNode      = document.getElementById('mode'),
-  themeNode     = document.getElementById('theme'),
-  operatorNode  = document.getElementById('operator'),
 
-  cm = CodeMirror(editorNode, {
+  // editor object
+  cm = CodeMirror(document.getElementById('editor'), {
     value: document.getElementById('code').textContent,
+    mode: cfg.mode,
     tabSize: 2,
     lineNumbers: true
-  });
+  }),
+
+  // user list
+  operatorListNode = document.getElementById('operatorlist');
+
+
+// user's ID
+let userId;
+
+// set theme and name
+setOption('theme', localStorage.getItem('theme') || 'default');
+setOption('operator', localStorage.getItem('operator') || 'operator');
 
 
 // encode whitespace
@@ -49,13 +57,14 @@ cm.on('change', (i, change) => {
   let text = change.text[0];
   if (change.text.length == 2 && !text && !change.text[1]) text = '\n';
 
-  raiseEvent('EDIT', {
+  raiseEvent('edit', {
     text: encodeSpace(text),
     from: { line: change.from.line, ch: change.from.ch },
     to:   { line: change.to.line, ch: change.to.ch }
   });
 
 });
+
 
 // programmatic edit
 export function edit(change) {
@@ -69,50 +78,71 @@ export function edit(change) {
 
 }
 
-// change title
-titleNode.addEventListener('change', e => {
-  let title = e.target.value.trim();
-  if (title) raiseEvent('TITL', title);
+
+// change title, mode, theme, or operator
+document.body.addEventListener('change', e => {
+
+  let target = e.target, type = target.id, value = target.value.trim();
+
+  if (!type || !value) return;
+
+  // set option
+  setOption(type, value);
+
+  // append user information
+  if (type === 'operator') {
+    addOperator(userId, value);
+    value = { userId, operator: value };
+  }
+
+  // raise event
+  raiseEvent(type, value);
+
 });
 
-// set editor mode
-setMode(cfg.mode);
-modeNode.addEventListener('change', e => setMode(e.target.value));
 
-export function setMode(mode) {
-  if (mode === cm.getOption('mode')) return;
-  modeNode.value = mode;
-  cm.setOption('mode', mode);
-  raiseEvent('MODE', mode);
-}
+// set an option
+export function setOption(name, value) {
 
-// set editor theme
-setTheme(localStorage.getItem('theme') || 'default');
-themeNode.addEventListener('change', e => setTheme(e.target.value));
+  let node = document.getElementById(name);
+  if (node) node.value = value;
 
-function setTheme(theme) {
-  if (theme === cm.getOption('theme')) return;
-  themeNode.value = theme;
-  localStorage.setItem('theme', theme);
-  cm.setOption('theme', theme);
-  raiseEvent('THME', theme);
-}
-
-// set operator name
-setOperator(localStorage.getItem('operator') || 'operator');
-operatorNode.addEventListener('change', e => setOperator(e.target.value));
-
-export function setOperator(operator) {
-  if (operator === cfg.operator) return;
-  cfg.operator = operator;
-  operatorNode.value = operator;
-  localStorage.setItem('operator', operator);
-  raiseEvent('USER', operator);
+  localStorage.setItem(name, value);
+  cm.setOption(name, value);
 }
 
 
-// raise new custom event
+// get an option
+export function getOption(name) {
+  return localStorage.getItem(name);
+}
+
+
+// define all users
+export function setOperators(id, user) {
+
+  user.forEach((u, idx) => addOperator(idx, u));
+  userId = id;
+  operatorListNode.children[userId].classList.add('self');
+
+}
+
+
+// add an individual user
+export function addOperator(id, name) {
+
+  while (operatorListNode.children.length <= id) {
+    let uItem = document.createElement('li');
+    operatorListNode.appendChild(uItem);
+  }
+
+  operatorListNode.children[id].textContent = name;
+
+}
+
+
+// raise custom event
 function raiseEvent(type, detail) {
-  let event = new CustomEvent(`cm${type}`, { detail });
+  let event = new CustomEvent(`cm:${type}`, { detail });
   window.dispatchEvent(event);
 }

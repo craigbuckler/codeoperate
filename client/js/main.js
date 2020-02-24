@@ -3,57 +3,88 @@
 import * as editor from './editor.js';
 import * as ws from './wsclient.js';
 
-// JS is enabled
+// JS enabled
 document.documentElement.classList.add('jsenabled');
 
-// delay before uploading all data
-const saveWait = cfg.saveWait;
-let save = null;
+// register this user
+ws.send('connect', { editId: cfg.editId, operator: editor.getOption('operator') });
 
 
-// need to refactor!
-// only set ALL if page has been loaded since the previous update
+// registration event
+window.addEventListener('ws:register', e => {
+  editor.setOperators(e.detail.userId, e.detail.user);
+});
 
-// abort save
-function saveAbort() {
+
+// add/remove user
+window.addEventListener('ws:operator', e => {
+  editor.addOperator(e.detail.userId, e.detail.operator);
+});
+
+
+// rename user
+window.addEventListener('cm:operator', e => {
+  ws.send('operator', e.detail);
+});
+
+
+// code editing events
+let save;
+window.addEventListener('beforeunload', editCode);
+window.addEventListener('cm:edit', editCode);
+window.addEventListener('ws:edit', editCode);
+window.addEventListener('ws:code', editCode);
+
+function editCode(e) {
+
+  // unloading: save all content
+  if (e.type === 'beforeunload' && save) saveAll();
+
   clearTimeout(save);
   save = null;
-}
 
-// unloading window
-window.addEventListener('beforeunload', () => {
-  saveAbort();
-  saveAll();
-});
+  switch (e.type) {
 
+    // user edit, with throttled save
+    case 'cm:edit':
+      ws.send('edit', e.detail);
+      save = setTimeout(saveAll, cfg.saveWait);
+      break;
 
-// user edit - broadcast
-window.addEventListener('cmEDIT', e => {
-  ws.send('EDIT', e.detail);
-  saveAbort();
-  save = setTimeout(saveAll, saveWait);
-});
+    // incoming edit
+    case 'ws:edit':
+      editor.edit(e.detail);
+      break;
 
+    // incoming saved content
+    case 'cm:code':
+      editor.set(e.detail);
+      break;
 
-// incoming edit
-window.addEventListener('wsEDIT', e => {
-  saveAbort();
-  editor.edit(e.detail);
-});
+  }
 
+  // send all content
+  function saveAll() {
+    ws.send('code', editor.get());
+  }
 
-// send all content
-function saveAll() {
-  console.log('send ALL');
-  saveAbort();
-  ws.send('SAVE', editor.get());
 }
 
 
-// incoming all content
-window.addEventListener('wsSAVE', e => {
-  if (save) return;
-  saveAbort();
-  console.log('receive ALL');
-  editor.set(e.detail);
-});
+// option events
+window.addEventListener('cm:title', editOption);
+window.addEventListener('ws:title', editOption);
+window.addEventListener('cm:mode', editOption);
+window.addEventListener('ws:mode', editOption);
+
+function editOption(e) {
+
+  let
+    type = e.type,
+    from = type.slice(0, 2),
+    opt = type.slice(3);
+
+  if (from === 'cm') ws.send(opt, e.detail);
+  else editor.setOption(opt, e.detail);
+
+}

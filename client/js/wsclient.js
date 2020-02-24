@@ -24,10 +24,10 @@ function init(type, data) {
 
 
 // send WebSocket message
-export function send(type = '----', data) {
+export function send(type = '', data = '') {
 
   if (!socket) init(type, data);
-  else socket.send(`${ type }${ JSON.stringify(data) }`);
+  else socket.send(`${ type }:${ JSON.stringify(data) }`);
 
 }
 
@@ -35,20 +35,22 @@ export function send(type = '----', data) {
 // parse incoming WebSocket message and raise custom event
 function receive(msg) {
 
-  let data, type = msg.slice(0, 4);
+  let p = msg.indexOf(':'), type = '', data = '';
 
-  try {
-    data = JSON.parse(msg.slice(4));
+  if (p > 0 && p < msg.length) {
+    type = msg.slice(0, p);
+
+    try { data = JSON.parse(msg.slice(p+1)); }
+    catch (e) { console.log(e, msg); }
+
   }
-  catch (e) { console.log(e, msg); }
 
-  if (type.length !== 4 || !data) return;
+  if (type && data) {
 
-  // raise custom event
-  let event = new CustomEvent(`ws${type}`, { detail: data || {} });
-  window.dispatchEvent(event);
+    // raise custom event
+    let event = new CustomEvent(`ws:${type}`, { detail: data || {} });
+    window.dispatchEvent(event);
+
+  }
 
 }
-
-// register user
-send('CONN', { editId: cfg.editId, operator: cfg.operator });

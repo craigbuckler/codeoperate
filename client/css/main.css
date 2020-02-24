@@ -12,6 +12,7 @@
   :root {
     --fore: #262626;
     --back: #efefef;
+    --actionh: #bbe;
   }
 
 }
@@ -92,6 +93,10 @@ button, a.button {
   border-radius: 3px;
 }
 
+input:focus, select:focus {
+  background-color: var(--actionh);
+}
+
 select, button {
   cursor: pointer;
 }
@@ -117,6 +122,30 @@ header a:hover, header a:focus {
 
 #title {
   width: 12em;
+}
+
+#operator, #operatorlist, #operatorlist li {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+#operatorlist li:empty, #operatorlist .self {
+  display: none;
+}
+
+#operator, #operatorlist li {
+  margin: 4px 0;
+  padding: 3px 3px 3px 1.6em;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path d="M911 784l-3 4a529 529 0 01-408 202c-154 0-299-72-408-202l-3-4 1-5c21-137 92-247 201-310l8-5 6 7a267 267 0 00390 0l6-7 8 5a420 420 0 01201 310l1 5zM500 499a245 245 0 10-1-490 245 245 0 001 490z" fill="grey" /></svg>');
+  background-size: 1.2em;
+  background-position: 3px 50%;
+  background-repeat: no-repeat;
+}
+
+#operatorlist li {
+  color: var(--action);
 }
 
 .CodeMirror, pre {
