@@ -1,6 +1,10 @@
 // main application
+/* global cfg */
 import * as editor from './editor.js';
 import * as ws from './wsclient.js';
+
+// JS is enabled
+document.documentElement.classList.add('jsenabled');
 
 // delay before uploading all data
 const saveWait = cfg.saveWait;

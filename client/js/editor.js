@@ -11,7 +11,7 @@ const
   operatorNode  = document.getElementById('operator'),
 
   cm = CodeMirror(editorNode, {
-    value: cfg.code,
+    value: document.getElementById('code').textContent,
     tabSize: 2,
     lineNumbers: true
   });

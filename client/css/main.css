@@ -1,4 +1,4 @@
-/* main styles */
+/* defaults */
 :root {
   --font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   --fore: #efefef;
@@ -7,6 +7,25 @@
   --actionh: #66d;
 }
 
+@media (prefers-color-scheme: light) {
+
+  :root {
+    --fore: #262626;
+    --back: #efefef;
+  }
+
+}
+
+/* show or hide when JS enabled */
+.jsshow, .jsenabled .jshide {
+  display: none !important;
+}
+
+.jsenabled .jsshow {
+  display: unset !important;
+}
+
+/* core styles */
 *, *:before, *:after {
   box-sizing: border-box;
 }
@@ -14,6 +33,7 @@
 html, body {
   padding: 0;
   margin: 0;
+  width: 100%;
   height: 100%;
 }
 
@@ -22,7 +42,7 @@ body {
   font-size: 100%;
   overflow: hidden;
   display: grid;
-  grid-template-columns: auto 12em;
+  grid-template-columns: calc(100vw - 12em) 12em;
   grid-template-rows: 3em auto;
   grid-gap: 0;
   color: var(--fore);
@@ -67,9 +87,12 @@ button, a.button {
   font-size: 1.2em;
   text-align: center;
   text-transform: uppercase;
-  line-height: 2;
+  line-height: 2.2;
   background-color: var(--action);
   border-radius: 3px;
+}
+
+select, button {
   cursor: pointer;
 }
 
@@ -96,9 +119,15 @@ header a:hover, header a:focus {
   width: 12em;
 }
 
-.CodeMirror {
-  font-family: var(--font);
-  font-size: 1rem;
+.CodeMirror, pre {
   width: 100%;
   height: 100%;
+  font-family: var(--font);
+  font-size: 1rem;
+  margin: 0;
+}
+
+pre {
+  padding: 0.2em 0 0.2em 2em;
+  overflow: auto;
 }

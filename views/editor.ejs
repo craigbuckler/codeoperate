@@ -8,9 +8,9 @@
 <!-- CodeMirror styles -->
 <link rel="stylesheet" href="<%- cfg.path.cmLib %>codemirror.css" />
 
-<% cfg.cmTheme.forEach(t => { if (t !== 'default') { %>
-  <link rel="stylesheet" href="<%- cfg.path.cmTheme %><%- t %>.css" />
-<% }}) %>
+<% for (let t = 1; t < cfg.cmTheme.length; t++) { %>
+  <link rel="stylesheet" href="<%- cfg.path.cmTheme %><%- cfg.cmTheme[t] %>.css" />
+<% } %>
 
 <!-- main styles -->
 <link rel="stylesheet" href="/css/main.css" />
@@ -25,27 +25,32 @@
 
   <select id="mode" title="mode">
   <% for(const m in cfg.cmMode) { %>
-    <option value="<%- cfg.cmMode[m] %>"><%- m %></option>
+    <option value="<%- cfg.cmMode[m] %>"<% if (edit.mode === cfg.cmMode[m]) { %> selected<% } %>><%- m %></option>
   <% } %>
   </select>
 
-  <select id="theme" title="theme">
+  <select id="theme" title="theme" class="jsshow">
   <% cfg.cmTheme.forEach(t => { %>
     <option value="<%- t %>"><%- t %></option>
   <% }) %>
   </select>
 
-  <a href="/new" class="button">new</a>
+  <a href="/new" class="button jsshow">new</a>
 
 </header>
 
-<main id="editor"></main>
+<main id="editor">
+
+  <pre id="code" class="jshide"><%= edit.code %></pre>
+
+</main>
 
 <aside>
 
   <input type="text" id="operator" value="operator" title="your name" minlength="1" maxlength="15" required />
 
-  <p id="created">created: <time datetime="<%= edit.created %>"><%= edit.created %></time></p>
+  <p id="updated" class="jshide">updated: <time><%= edit.updated %></time></p>
+  <p id="created">created: <time><%= edit.created %></time></p>
 
 </aside>
 
@@ -62,7 +67,6 @@ window.cfg = {
   wsURL   : 'ws://<%- cfg.hostname %>:<%- cfg.portWS %>',
   editId  : '<%- edit._id %>',
   mode    : '<%- edit.mode %>',
-  code    : `<%- edit.code %>`,
   saveWait: <%- cfg.saveWait %>
 };
 </script>
