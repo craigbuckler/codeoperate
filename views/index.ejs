@@ -18,7 +18,18 @@
 
   <main>
 
-
+    <% if (recent && recent.length) { %>
+      <ol id="recent">
+        <% recent.forEach(r => { %>
+          <li><a href="/<%- r._id %>">
+            <h2><%- r.title %></h2>
+            <p><%- r.mode %></p>
+            <p>updated: <%- r.updated %></p>
+            <p>created: <%- r.created %></p>
+          </a></li>
+        <% }) %>
+      </ol>
+    <% } %>
 
   </main>
 

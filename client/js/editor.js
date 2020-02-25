@@ -17,9 +17,6 @@ const
   operatorListNode = document.getElementById('operatorlist');
 
 
-// user's ID
-let userId;
-
 // set theme and name
 setOption('theme', localStorage.getItem('theme') || 'default');
 setOption('operator', localStorage.getItem('operator') || 'operator');
@@ -89,12 +86,6 @@ document.body.addEventListener('change', e => {
   // set option
   setOption(type, value);
 
-  // append user information
-  if (type === 'operator') {
-    addOperator(userId, value);
-    value = { userId, operator: value };
-  }
-
   // raise event
   raiseEvent(type, value);
 
@@ -119,11 +110,10 @@ export function getOption(name) {
 
 
 // define all users
-export function setOperators(id, user) {
+export function setOperators(idSelf, user) {
 
   user.forEach((u, idx) => addOperator(idx, u));
-  userId = id;
-  operatorListNode.children[userId].classList.add('self');
+  operatorListNode.children[idSelf].classList.add('self');
 
 }
 

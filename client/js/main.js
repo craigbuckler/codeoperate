@@ -10,21 +10,9 @@ document.documentElement.classList.add('jsenabled');
 ws.send('connect', { editId: cfg.editId, operator: editor.getOption('operator') });
 
 
-// registration event
+// register all users
 window.addEventListener('ws:register', e => {
   editor.setOperators(e.detail.userId, e.detail.user);
-});
-
-
-// add/remove user
-window.addEventListener('ws:operator', e => {
-  editor.addOperator(e.detail.userId, e.detail.operator);
-});
-
-
-// rename user
-window.addEventListener('cm:operator', e => {
-  ws.send('operator', e.detail);
 });
 
 
@@ -76,6 +64,7 @@ window.addEventListener('cm:title', editOption);
 window.addEventListener('ws:title', editOption);
 window.addEventListener('cm:mode', editOption);
 window.addEventListener('ws:mode', editOption);
+window.addEventListener('cm:operator', editOption);
 
 function editOption(e) {
 
@@ -88,3 +77,9 @@ function editOption(e) {
   else editor.setOption(opt, e.detail);
 
 }
+
+
+// add, remove, or rename user
+window.addEventListener('ws:operator', e => {
+  editor.addOperator(e.detail.userId, e.detail.operator);
+});
