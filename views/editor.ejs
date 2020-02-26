@@ -17,15 +17,15 @@
 </head>
 <body>
 
-<header>
+<header class="full">
 
   <h1><a href="/">CodeOperate</a></h1>
 
-  <input type="text" id="title" value="<%= edit.title %>" title="title" required />
+  <input type="text" id="title" value="<%= edit.title %>" title="title" minlength="1" maxlength="30" required />
 
   <select id="mode" title="mode">
   <% for(const m in cfg.cmMode) { %>
-    <option value="<%- cfg.cmMode[m] %>"<% if (edit.mode === cfg.cmMode[m]) { %> selected<% } %>><%- m %></option>
+    <option value="<%- m %>"<% if (edit.mode === m) { %> selected<% } %>><%- cfg.cmMode[m] %></option>
   <% } %>
   </select>
 
@@ -47,12 +47,12 @@
 
 <aside>
 
-  <input type="text" id="operator" value="operator" title="your name" minlength="1" maxlength="15" required />
+  <input type="text" id="operator" value="operator" title="you - edit your name" minlength="1" maxlength="15" required />
 
   <ol id="operatorlist"></ol>
 
-  <p id="updated" class="jshide">updated: <time><%= edit.updated %></time></p>
-  <p id="created">created: <time><%= edit.created %></time></p>
+  <p id="updated" class="jshide">updated <time><%= edit.updated %></time></p>
+  <p id="created">created <time><%= edit.created %></time></p>
 
 </aside>
 
@@ -60,7 +60,7 @@
 <script src="<%- cfg.path.cmLib %>codemirror.js" defer></script>
 
 <% for(const m in cfg.cmMode) { %>
-  <script src="<%- cfg.path.cmMode %><%- cfg.cmMode[m] %>/<%- cfg.cmMode[m] %>.js" defer></script>
+  <script src="<%- cfg.path.cmMode %><%- m %>/<%- m %>.js" defer></script>
 <% } %>
 
 <!-- main script -->

@@ -5,6 +5,8 @@
   --back: #262626;
   --action: #88c;
   --actionh: #66d;
+  --header: 3em;
+  --aside: 10em;
 }
 
 @media (prefers-color-scheme: light) {
@@ -23,10 +25,10 @@
 }
 
 .jsenabled .jsshow {
-  display: unset !important;
+  display: block !important;
 }
 
-/* core styles */
+/* layout */
 *, *:before, *:after {
   box-sizing: border-box;
 }
@@ -43,36 +45,57 @@ body {
   font-size: 100%;
   overflow: hidden;
   display: grid;
-  grid-template-columns: calc(100vw - 12em) 12em;
-  grid-template-rows: 3em auto;
+  grid-template-columns: calc(100vw - var(--aside)) var(--aside);
+  grid-template-rows: var(--header) calc(100vh - var(--header));
   grid-gap: 0;
   color: var(--fore);
   background-color: var(--back);
 }
 
-header {
+.full {
   grid-column-start: span 2;
+  overflow: auto;
+}
+
+header {
   display: flex;
   align-content: center;
   padding: 0;
   margin: 0;
-  border: 2px solid var(--back);
+}
+
+aside {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5em;
+}
+
+aside p {
+  font-size: 0.8em;
+  margin: 0;
+  margin-block-start: auto;
+  margin-block-end: 0.5em;
+}
+
+aside time {
+  display: block;
 }
 
 h1 {
-  font-size: 1.5em;
+  font-size: 1.4em;
   font-weight: normal;
-  padding: 0 1em;
+  padding: 0.4em;
   margin: 0;
-  line-height: 1.7;
 }
 
+/* fields */
 input, select, option, button, a.button {
   width: 8em;
   font-family: inherit;
-  font-size: 1em;
-  padding: 0 0.4em;
-  margin: 0 0.5em;
+  font-size: inherit;
+  line-height: 1;
+  padding: 0.5em;
+  margin: 2px;
   color: var(--fore);
   background-color: var(--back);
   border: 0 none;
@@ -84,11 +107,11 @@ input, select, option, button, a.button {
 
 button, a.button {
   display: block;
-  width: 6em;
+  width: auto;
   font-size: 1.2em;
   text-align: center;
   text-transform: uppercase;
-  line-height: 2.2;
+  padding: 0.5em 1em;
   background-color: var(--action);
   border-radius: 3px;
 }
@@ -121,9 +144,65 @@ header a:hover, header a:focus {
 }
 
 #title {
-  width: 12em;
+  width: 25vw;
 }
 
+/* recent items */
+#recent, #recent li {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+#recent {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 1em;
+  perspective: 400px;
+}
+
+#recent li {
+  flex: 1 1 16em;
+  margin: 0.5em;
+  background-color: var(--action);
+  border-radius: 5px;
+  transform: rotateX(0deg);
+  transition: all 0.2s ease-in-out;
+}
+
+#recent li:hover, #recent li:focus-within {
+  transform: rotateX(8deg);
+  background-color: var(--actionh);
+}
+
+#recent a {
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  text-decoration: none;
+  padding: 0.5em 1em;
+  color: var(--fore);
+}
+
+#recent a * {
+  padding: 0;
+  margin: 0;
+}
+
+#recent h2 {
+  font-size: 1.6em;
+  font-weight: normal;
+}
+
+#recent .mode {
+  margin-block-end: 1em;
+}
+
+#recent .time {
+  margin-block-start: auto;
+}
+
+/* operators */
 #operator, #operatorlist, #operatorlist li {
   width: 100%;
   padding: 0;
@@ -136,9 +215,9 @@ header a:hover, header a:focus {
 }
 
 #operator, #operatorlist li {
-  margin: 4px 0;
-  padding: 3px 3px 3px 1.6em;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path d="M911 784l-3 4a529 529 0 01-408 202c-154 0-299-72-408-202l-3-4 1-5c21-137 92-247 201-310l8-5 6 7a267 267 0 00390 0l6-7 8 5a420 420 0 01201 310l1 5zM500 499a245 245 0 10-1-490 245 245 0 001 490z" fill="grey" /></svg>');
+  margin: 0;
+  padding: 0.3em 0.3em 0.3em 1.6em;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path d="M911 784l-3 4a529 529 0 01-408 202c-154 0-299-72-408-202l-3-4 1-5c21-137 92-247 201-310l8-5 6 7a267 267 0 00390 0l6-7 8 5a420 420 0 01201 310l1 5zM500 499a245 245 0 10-1-490 245 245 0 001 490z" fill="rgb(120,120,120)" /></svg>');
   background-size: 1.2em;
   background-position: 3px 50%;
   background-repeat: no-repeat;
@@ -148,6 +227,7 @@ header a:hover, header a:focus {
   color: var(--action);
 }
 
+/* code */
 .CodeMirror, pre {
   width: 100%;
   height: 100%;
