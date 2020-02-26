@@ -6,6 +6,7 @@ docker*.yml
 .config
 .npm
 .ash_history
+.eslintrc.json
 .vscode
 node_modules
 

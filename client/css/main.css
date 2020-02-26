@@ -108,7 +108,7 @@ input, select, option, button, a.button {
 button, a.button {
   display: block;
   width: auto;
-  font-size: 1.2em;
+  font-size: 1.3em;
   text-align: center;
   text-transform: uppercase;
   padding: 0.5em 1em;
@@ -144,7 +144,7 @@ header a:hover, header a:focus {
 }
 
 #title {
-  width: 25vw;
+  width: 22vw;
 }
 
 /* recent items */
