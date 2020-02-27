@@ -22,18 +22,6 @@ setOption('theme', localStorage.getItem('theme') || 'default');
 setOption('operator', localStorage.getItem('operator') || 'operator');
 
 
-// encode whitespace
-function encodeSpace(str) {
-  return str.replace(/\t/g, '[\\t]').replace(/\n/g, '[\\n]');
-}
-
-
-// decode whitespace
-function decodeSpace(str) {
-  return str.replace(/\[\\t\]/g, '\t').replace(/\[\\n\]/g, '\n');
-}
-
-
 // fetch all content
 export function get() {
   return cm.getValue();
@@ -51,11 +39,8 @@ cm.on('change', (i, change) => {
 
   if (change.origin === 'gen' || change.origin === 'setValue') return;
 
-  let text = change.text[0];
-  if (change.text.length == 2 && !text && !change.text[1]) text = '\n';
-
   raiseEvent('edit', {
-    text: encodeSpace(text),
+    text: change.text.reduce((a, t) => a + t + '\n', '').slice(0, -1),
     from: { line: change.from.line, ch: change.from.ch },
     to:   { line: change.to.line, ch: change.to.ch }
   });
@@ -67,7 +52,7 @@ cm.on('change', (i, change) => {
 export function edit(change) {
 
   cm.replaceRange(
-    decodeSpace(change.text),
+    change.text,
     change.from,
     change.to,
     'gen'
