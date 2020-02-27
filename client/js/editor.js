@@ -40,7 +40,7 @@ cm.on('change', (i, change) => {
   if (change.origin === 'gen' || change.origin === 'setValue') return;
 
   raiseEvent('edit', {
-    text: change.text.reduce((a, t) => a + t + '\n', '').slice(0, -1),
+    text: change.text,
     from: { line: change.from.line, ch: change.from.ch },
     to:   { line: change.to.line, ch: change.to.ch }
   });
